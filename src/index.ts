@@ -2,11 +2,9 @@ import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 import http from "http";
-import path from "path";
 import { Server } from "socket.io";
 import greetingsRouts from "./routes/greetings.routes";
 import connectToDb from "./utils/connectToDb";
-import cronJobe from "./utils/cronJobs";
 import checkEnvironmentVariables from "./utils/envVariablesCheck";
 
 const chalk = require("chalk");
@@ -17,22 +15,13 @@ const io = new Server(server);
 
 checkEnvironmentVariables();
 connectToDb();
-cronJobe();
 
 //app.use(morgan("dev"));
 app.use(cors());
 app.use(express.json());
-
-app.use(express.static(path.join(__dirname, "../views")));
-app.set("view engine", "ejs");
-
-app.set("views", path.join(__dirname, "../views"));
-
+app.use(express.urlencoded({ extended: true }));
 app.use(cors());
-
-app.get("/", (req, res) => {
-  res.render("index");
-});
+app.use(express.static("public"));
 
 io.on("connection", (socket) => {
   console.log("a user connected");
