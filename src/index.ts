@@ -16,11 +16,9 @@ const io = new Server(server);
 checkEnvironmentVariables();
 connectToDb();
 
-//app.use(morgan("dev"));
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
 app.use(express.static("public"));
 
 io.on("connection", (socket) => {
@@ -36,10 +34,6 @@ io.on("connection", (socket) => {
 //API endpoints
 const base_url = process.env.BASE_API_URL;
 app.use(`${base_url}/greetings`, greetingsRouts);
-
-app.use((req, res, next) => {
-  res.status(404).render("404");
-});
 
 server.listen(process.env.PORT, () => {
   console.log(
