@@ -137,7 +137,7 @@ var drawPlayer = function (player) {
     if (player.tankHull) {
         ctx.drawImage(player.tankHull, player.x, player.y, 200, 200);
         ctx.save();
-        ctx.translate(player.x + 100, player.y + 100);
+        ctx.translate(player.x + 100, player.y + 120);
         ctx.rotate((player.angle * Math.PI) / 180);
         ctx.drawImage(player.tankGun, -100, -100, 200, 200);
         ctx.translate(0, 0);
