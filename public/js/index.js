@@ -48,6 +48,7 @@ var gameState = {
             tankHull: new Image(),
             tankGun: new Image(),
             tankTrack: new Image(),
+            tankTrack_2: new Image(),
             x: 20,
             y: 20,
             angle: 0,
@@ -95,17 +96,23 @@ var preloadPlayerImages = function () { return __awaiter(_this, void 0, void 0, 
                     var tankGun = new Image();
                     var tankHull = new Image();
                     var tankTrack = new Image();
+                    var tankTrack_2 = new Image();
                     tankHull.src = "/game_assets/PNG/Hulls_Color_".concat(player.color, "/Hull_0").concat(player.hull, ".png");
                     tankGun.src = "/game_assets/PNG/Weapon_Color_".concat(player.color, "_256X256/Gun_0").concat(player.hull, ".png");
+                    tankTrack.src = "/game_assets/PNG/Tracks/Track_4_A.png";
+                    tankTrack_2.src = "/game_assets/PNG/Tracks/Track_4_B.png";
                     return new Promise(function (resolve, reject) {
-                        tankHull.onload = function () {
-                            player.tankHull = tankHull; // Store the preloaded image in the player object
+                        var images = [tankHull, tankGun, tankTrack, tankTrack_2];
+                        images.forEach(function (image) { return image.decode(); });
+                        Promise.all(images.map(function (image) { return image.decode(); }))
+                            .then(function () {
+                            player.tankHull = tankHull;
+                            player.tankGun = tankGun;
+                            player.tankTrack = tankTrack;
+                            player.tankTrack_2 = tankTrack_2;
                             resolve();
-                        };
-                        tankGun.onload = function () {
-                            player.tankGun = tankGun; // Store the preloaded image in the player object
-                            resolve();
-                        };
+                        })
+                            .catch(reject);
                         tankHull.onerror = function () {
                             console.error("Image not found for path: ".concat(tankHull.src));
                             reject(new Error("Image not found: ".concat(tankHull.src)));
@@ -133,8 +140,24 @@ var preloadPlayerImages = function () { return __awaiter(_this, void 0, void 0, 
         }
     });
 }); };
+var lastAnimationFrame = 0;
+var frameInterval = 2;
+var currentTrackImage = 1;
 var drawPlayer = function (player) {
-    if (player.tankHull) {
+    if (player.tankHull && player.tankTrack) {
+        lastAnimationFrame += 1;
+        if (lastAnimationFrame > frameInterval) {
+            currentTrackImage = currentTrackImage === 0 ? 1 : 0;
+            lastAnimationFrame = 0;
+        }
+        if (currentTrackImage === 0) {
+            ctx.drawImage(player.tankTrack, player.x + 40, player.y, 40, 200);
+            ctx.drawImage(player.tankTrack, player.x + 120, player.y, 40, 200);
+        }
+        else if (currentTrackImage === 1) {
+            ctx.drawImage(player.tankTrack_2, player.x + 40, player.y, 40, 200);
+            ctx.drawImage(player.tankTrack_2, player.x + 120, player.y, 40, 200);
+        }
         ctx.drawImage(player.tankHull, player.x, player.y, 200, 200);
         ctx.save();
         ctx.translate(player.x + 100, player.y + 120);

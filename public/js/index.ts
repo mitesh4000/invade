@@ -13,6 +13,7 @@ interface Player {
   tankHull: HTMLImageElement;
   tankGun: HTMLImageElement;
   tankTrack: HTMLImageElement;
+  tankTrack_2: HTMLImageElement;
   x: number;
   y: number;
   angle: number;
@@ -33,6 +34,7 @@ const gameState: GameState = {
       tankHull: new Image(),
       tankGun: new Image(),
       tankTrack: new Image(),
+      tankTrack_2: new Image(),
       x: 20,
       y: 20,
       angle: 0,
@@ -77,17 +79,23 @@ const preloadPlayerImages = async (): Promise<void> => {
     const tankGun = new Image();
     const tankHull = new Image();
     const tankTrack = new Image();
+    const tankTrack_2 = new Image();
     tankHull.src = `/game_assets/PNG/Hulls_Color_${player.color}/Hull_0${player.hull}.png`;
     tankGun.src = `/game_assets/PNG/Weapon_Color_${player.color}_256X256/Gun_0${player.hull}.png`;
+    tankTrack.src = `/game_assets/PNG/Tracks/Track_4_A.png`;
+    tankTrack_2.src = `/game_assets/PNG/Tracks/Track_4_B.png`;
     return new Promise<void>((resolve, reject) => {
-      tankHull.onload = () => {
-        player.tankHull = tankHull; // Store the preloaded image in the player object
-        resolve();
-      };
-      tankGun.onload = () => {
-        player.tankGun = tankGun; // Store the preloaded image in the player object
-        resolve();
-      };
+      const images = [tankHull, tankGun, tankTrack, tankTrack_2];
+      images.forEach((image) => image.decode());
+      Promise.all(images.map((image) => image.decode()))
+        .then(() => {
+          player.tankHull = tankHull;
+          player.tankGun = tankGun;
+          player.tankTrack = tankTrack;
+          player.tankTrack_2 = tankTrack_2;
+          resolve();
+        })
+        .catch(reject);
       tankHull.onerror = () => {
         console.error(`Image not found for path: ${tankHull.src}`);
         reject(new Error(`Image not found: ${tankHull.src}`));
@@ -108,9 +116,26 @@ const preloadPlayerImages = async (): Promise<void> => {
     console.error("Failed to preload images", error);
   }
 };
+let lastAnimationFrame = 0;
+const frameInterval = 2;
+let currentTrackImage = 1;
 
 const drawPlayer = (player: Player): void => {
-  if (player.tankHull) {
+  if (player.tankHull && player.tankTrack) {
+    lastAnimationFrame += 1;
+
+    if (lastAnimationFrame > frameInterval) {
+      currentTrackImage = currentTrackImage === 0 ? 1 : 0;
+      lastAnimationFrame = 0;
+    }
+    if (currentTrackImage === 0) {
+      ctx.drawImage(player.tankTrack, player.x + 40, player.y, 40, 200);
+      ctx.drawImage(player.tankTrack, player.x + 120, player.y, 40, 200);
+    } else if (currentTrackImage === 1) {
+      ctx.drawImage(player.tankTrack_2, player.x + 40, player.y, 40, 200);
+      ctx.drawImage(player.tankTrack_2, player.x + 120, player.y, 40, 200);
+    }
+
     ctx.drawImage(player.tankHull, player.x, player.y, 200, 200);
     ctx.save();
 
