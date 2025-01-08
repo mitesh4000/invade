@@ -39,7 +39,7 @@ var canvas = document.getElementById("canvas");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 var ctx = canvas.getContext("2d");
-var playerSize = 200;
+var playerSize = 80;
 // Initial game state
 var gameState = {
     players: [
@@ -53,8 +53,9 @@ var gameState = {
             x: 20,
             y: 20,
             angle: 0,
-            color: "A",
-            hull: 3,
+            color: "B",
+            hull: 2,
+            track: 2,
         },
         // {
         //   playerId: 2,
@@ -106,8 +107,8 @@ var preloadPlayerImages = function () { return __awaiter(_this, void 0, void 0, 
                     var tankTrack_2 = new Image();
                     tankHull.src = "/game_assets/PNG/Hulls_Color_".concat(player.color, "/Hull_0").concat(player.hull, ".png");
                     tankGun.src = "/game_assets/PNG/Weapon_Color_".concat(player.color, "_256X256/Gun_0").concat(player.hull, ".png");
-                    tankTrack.src = "/game_assets/PNG/Tracks/Track_4_A.png";
-                    tankTrack_2.src = "/game_assets/PNG/Tracks/Track_4_B.png";
+                    tankTrack.src = "/game_assets/PNG/Tracks/Track_".concat(player.track, "_A.png");
+                    tankTrack_2.src = "/game_assets/PNG/Tracks/Track_".concat(player.track, "_B.png");
                     return new Promise(function (resolve, reject) {
                         var images = [tankHull, tankGun, tankTrack, tankTrack_2];
                         images.forEach(function (image) { return image.decode(); });
@@ -158,18 +159,18 @@ var drawPlayer = function (player) {
             lastAnimationFrame = 0;
         }
         if (currentTrackImage === 0) {
-            ctx.drawImage(player.tankTrack, player.x + playerSize / 4, player.y, playerSize / 4, playerSize);
-            ctx.drawImage(player.tankTrack, player.x + playerSize / 2, player.y, playerSize / 4, playerSize);
+            ctx.drawImage(player.tankTrack, player.x + playerSize / 5, player.y, playerSize / 4, playerSize);
+            ctx.drawImage(player.tankTrack, player.x + playerSize / 1.8, player.y, playerSize / 4, playerSize);
         }
         else if (currentTrackImage === 1) {
-            ctx.drawImage(player.tankTrack_2, player.x + playerSize / 4, player.y, playerSize / 4, playerSize);
-            ctx.drawImage(player.tankTrack_2, player.x + playerSize / 2, player.y, playerSize / 4, playerSize);
+            ctx.drawImage(player.tankTrack_2, player.x + playerSize / 5, player.y, playerSize / 4, playerSize);
+            ctx.drawImage(player.tankTrack_2, player.x + playerSize / 1.8, player.y, playerSize / 4, playerSize);
         }
-        ctx.drawImage(player.tankHull, player.x, player.y, 200, 200);
+        ctx.drawImage(player.tankHull, player.x, player.y, playerSize, playerSize);
         ctx.save();
-        ctx.translate(player.x + 100, player.y + 120);
+        ctx.translate(player.x + playerSize / 2, player.y + playerSize / 1.6);
         ctx.rotate((player.angle * Math.PI) / 180);
-        ctx.drawImage(player.tankGun, -100, -100, 200, 200);
+        ctx.drawImage(player.tankGun, -40, -40, playerSize, playerSize);
         ctx.translate(0, 0);
         ctx.restore();
     }
