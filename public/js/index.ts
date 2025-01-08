@@ -74,6 +74,13 @@ const gameState: GameState = {
   ],
 };
 
+const tankConfig = {
+  tankHull: "/game_assets/PNG/Hulls_Color_A/Hull_04.png",
+  tankGun: "/game_assets/PNG/Weapon_Color_A_256X256/Gun_04.png",
+  tankTrack: "/game_assets/PNG/Tracks/Track_4_A.png",
+  tankTrack_2: "/game_assets/PNG/Tracks/Track_4_B.png",
+};
+
 const preloadPlayerImages = async (): Promise<void> => {
   const promises = gameState.players.map((player) => {
     const tankGun = new Image();

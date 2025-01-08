@@ -87,6 +87,12 @@ var gameState = {
         // },
     ],
 };
+var tankConfig = {
+    tankHull: "/game_assets/PNG/Hulls_Color_A/Hull_04.png",
+    tankGun: "/game_assets/PNG/Weapon_Color_A_256X256/Gun_04.png",
+    tankTrack: "/game_assets/PNG/Tracks/Track_4_A.png",
+    tankTrack_2: "/game_assets/PNG/Tracks/Track_4_B.png",
+};
 var preloadPlayerImages = function () { return __awaiter(_this, void 0, void 0, function () {
     var promises, error_1;
     return __generator(this, function (_a) {
