@@ -185,6 +185,12 @@ const drawPlayer = (player: Player): void => {
   }
 };
 
+const drawMap = (): void => {
+  let map = new Image();
+  map.src = "/game_assets/PNG/Map/Map_01.png";
+  ctx.drawImage(map, 0, 0, canvas.width, canvas.height);
+};
+
 const drawAllThePlayers = (): void => {
   gameState.players.forEach(drawPlayer);
 };
