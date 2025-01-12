@@ -1,4 +1,5 @@
 const canvas = document.getElementById("canvas") as HTMLCanvasElement;
+// setting canvas height and width in pixels
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
@@ -19,16 +20,26 @@ interface Player {
   angle: number;
   color: string;
   hull: number;
-
+  moving: boolean;
   track: Number; // example ["A",2]
 }
 
 interface GameState {
+  map: {
+    mapImage: HTMLImageElement;
+    x: number;
+    y: number;
+  };
   players: Player[];
 }
 
 // Initial game state
 const gameState: GameState = {
+  map: {
+    mapImage: new Image(),
+    x: 0,
+    y: 0,
+  },
   players: [
     {
       playerId: 1,
@@ -37,12 +48,13 @@ const gameState: GameState = {
       tankGun: new Image(),
       tankTrack: new Image(),
       tankTrack_2: new Image(),
-      x: 20,
-      y: 20,
+      x: canvas.width / 2,
+      y: canvas.height / 2,
       angle: 0,
       color: "B",
       hull: 2,
       track: 2,
+      moving: false,
     },
     // {
     //   playerId: 2,
@@ -94,6 +106,7 @@ const preloadPlayerImages = async (): Promise<void> => {
     tankGun.src = `/game_assets/PNG/Weapon_Color_${player.color}_256X256/Gun_0${player.hull}.png`;
     tankTrack.src = `/game_assets/PNG/Tracks/Track_${player.track}_A.png`;
     tankTrack_2.src = `/game_assets/PNG/Tracks/Track_${player.track}_B.png`;
+    gameState.map.mapImage.src = "/game_assets/map.png";
 
     return new Promise<void>((resolve, reject) => {
       const images = [tankHull, tankGun, tankTrack, tankTrack_2];
@@ -130,6 +143,10 @@ const preloadPlayerImages = async (): Promise<void> => {
 let lastAnimationFrame = 0;
 const frameInterval = 2;
 let currentTrackImage = 1;
+
+const drawMap = (): void => {
+  ctx.drawImage(gameState.map.mapImage, gameState.map.x, gameState.map.y);
+};
 
 const drawPlayer = (player: Player): void => {
   if (player.tankHull && player.tankTrack) {
@@ -185,39 +202,34 @@ const drawPlayer = (player: Player): void => {
   }
 };
 
-const drawMap = (): void => {
-  let map = new Image();
-  map.src = "/game_assets/PNG/Map/Map_01.png";
-  ctx.drawImage(map, 0, 0, canvas.width, canvas.height);
-};
-
 const drawAllThePlayers = (): void => {
   gameState.players.forEach(drawPlayer);
 };
 
-// Move a player based on keypress
+// create illusion of player movement by moving the background with wasd controls
 document.addEventListener("keydown", (event: KeyboardEvent): void => {
   const movementStep = 5;
   const player = gameState.players[0]; // Assuming we're moving the first player
-
-  if (event.key === "ArrowUp" && player.y > 0) {
-    player.y -= movementStep;
-  } else if (
-    event.key === "ArrowDown" &&
-    player.y < canvas.height - movementStep
-  ) {
-    player.y += movementStep;
-  } else if (event.key === "ArrowLeft" && player.x > 0) {
-    player.x -= movementStep;
-  } else if (
-    event.key === "ArrowRight" &&
-    player.x < canvas.width - movementStep
-  ) {
-    player.x += movementStep;
-  } else if (event.key === "e") {
-    player.angle += 5;
-  } else if (event.key === "q") {
-    player.angle -= 5;
+  const map = gameState.map;
+  switch (event.key) {
+    case "w":
+      map.y += movementStep;
+      break;
+    case "s":
+      map.y -= movementStep;
+      break;
+    case "a":
+      map.x += movementStep;
+      break;
+    case "d":
+      map.x -= movementStep;
+      break;
+    case "e":
+      player.angle += 5;
+      break;
+    case "q":
+      player.angle -= 5;
+      break;
   }
 });
 preloadPlayerImages();
@@ -230,6 +242,7 @@ const gameLoop = (): void => {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   // drawAllThePlayers();
+  drawMap();
   drawAllThePlayers();
 
   setTimeout(gameLoop, 1000 / 10); // Run at 10 FPS

@@ -36,12 +36,18 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 var _this = this;
 var canvas = document.getElementById("canvas");
+// setting canvas height and width in pixels
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 var ctx = canvas.getContext("2d");
 var playerSize = 80;
 // Initial game state
 var gameState = {
+    map: {
+        mapImage: new Image(),
+        x: 0,
+        y: 0,
+    },
     players: [
         {
             playerId: 1,
@@ -50,12 +56,13 @@ var gameState = {
             tankGun: new Image(),
             tankTrack: new Image(),
             tankTrack_2: new Image(),
-            x: 20,
-            y: 20,
+            x: canvas.width / 2,
+            y: canvas.height / 2,
             angle: 0,
             color: "B",
             hull: 2,
             track: 2,
+            moving: false,
         },
         // {
         //   playerId: 2,
@@ -109,6 +116,7 @@ var preloadPlayerImages = function () { return __awaiter(_this, void 0, void 0, 
                     tankGun.src = "/game_assets/PNG/Weapon_Color_".concat(player.color, "_256X256/Gun_0").concat(player.hull, ".png");
                     tankTrack.src = "/game_assets/PNG/Tracks/Track_".concat(player.track, "_A.png");
                     tankTrack_2.src = "/game_assets/PNG/Tracks/Track_".concat(player.track, "_B.png");
+                    gameState.map.mapImage.src = "/game_assets/map.png";
                     return new Promise(function (resolve, reject) {
                         var images = [tankHull, tankGun, tankTrack, tankTrack_2];
                         images.forEach(function (image) { return image.decode(); });
@@ -151,6 +159,9 @@ var preloadPlayerImages = function () { return __awaiter(_this, void 0, void 0, 
 var lastAnimationFrame = 0;
 var frameInterval = 2;
 var currentTrackImage = 1;
+var drawMap = function () {
+    ctx.drawImage(gameState.map.mapImage, gameState.map.x, gameState.map.y);
+};
 var drawPlayer = function (player) {
     if (player.tankHull && player.tankTrack) {
         lastAnimationFrame += 1;
@@ -181,29 +192,30 @@ var drawPlayer = function (player) {
 var drawAllThePlayers = function () {
     gameState.players.forEach(drawPlayer);
 };
-// Move a player based on keypress
+// create illusion of player movement by moving the background with wasd controls
 document.addEventListener("keydown", function (event) {
     var movementStep = 5;
     var player = gameState.players[0]; // Assuming we're moving the first player
-    if (event.key === "ArrowUp" && player.y > 0) {
-        player.y -= movementStep;
-    }
-    else if (event.key === "ArrowDown" &&
-        player.y < canvas.height - movementStep) {
-        player.y += movementStep;
-    }
-    else if (event.key === "ArrowLeft" && player.x > 0) {
-        player.x -= movementStep;
-    }
-    else if (event.key === "ArrowRight" &&
-        player.x < canvas.width - movementStep) {
-        player.x += movementStep;
-    }
-    else if (event.key === "e") {
-        player.angle += 5;
-    }
-    else if (event.key === "q") {
-        player.angle -= 5;
+    var map = gameState.map;
+    switch (event.key) {
+        case "w":
+            map.y += movementStep;
+            break;
+        case "s":
+            map.y -= movementStep;
+            break;
+        case "a":
+            map.x += movementStep;
+            break;
+        case "d":
+            map.x -= movementStep;
+            break;
+        case "e":
+            player.angle += 5;
+            break;
+        case "q":
+            player.angle -= 5;
+            break;
     }
 });
 preloadPlayerImages();
@@ -214,6 +226,7 @@ var gameLoop = function () {
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     // drawAllThePlayers();
+    drawMap();
     drawAllThePlayers();
     setTimeout(gameLoop, 1000 / 10); // Run at 10 FPS
 };
