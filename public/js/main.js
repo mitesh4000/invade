@@ -165,7 +165,7 @@ var drawMap = function () {
 var drawPlayer = function (player) {
     if (player.tankHull && player.tankTrack) {
         lastAnimationFrame += 1;
-        if (lastAnimationFrame > frameInterval) {
+        if (lastAnimationFrame > frameInterval && player.moving) {
             currentTrackImage = currentTrackImage === 0 ? 1 : 0;
             lastAnimationFrame = 0;
         }
@@ -196,6 +196,7 @@ var drawAllThePlayers = function () {
 document.addEventListener("keydown", function (event) {
     var movementStep = 5;
     var player = gameState.players[0]; // Assuming we're moving the first player
+    player.moving = true;
     var map = gameState.map;
     switch (event.key) {
         case "w":
@@ -217,6 +218,10 @@ document.addEventListener("keydown", function (event) {
             player.angle -= 5;
             break;
     }
+});
+document.addEventListener("keyup", function (event) {
+    var player = gameState.players[0]; // Assuming we're moving the first player
+    player.moving = false;
 });
 preloadPlayerImages();
 // Main game loop

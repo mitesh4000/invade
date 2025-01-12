@@ -152,7 +152,7 @@ const drawPlayer = (player: Player): void => {
   if (player.tankHull && player.tankTrack) {
     lastAnimationFrame += 1;
 
-    if (lastAnimationFrame > frameInterval) {
+    if (lastAnimationFrame > frameInterval && player.moving) {
       currentTrackImage = currentTrackImage === 0 ? 1 : 0;
       lastAnimationFrame = 0;
     }
@@ -209,7 +209,9 @@ const drawAllThePlayers = (): void => {
 // create illusion of player movement by moving the background with wasd controls
 document.addEventListener("keydown", (event: KeyboardEvent): void => {
   const movementStep = 5;
+
   const player = gameState.players[0]; // Assuming we're moving the first player
+  player.moving = true;
   const map = gameState.map;
   switch (event.key) {
     case "w":
@@ -231,6 +233,11 @@ document.addEventListener("keydown", (event: KeyboardEvent): void => {
       player.angle -= 5;
       break;
   }
+});
+
+document.addEventListener("keyup", (event: KeyboardEvent): void => {
+  const player = gameState.players[0]; // Assuming we're moving the first player
+  player.moving = false;
 });
 preloadPlayerImages();
 // Main game loop
