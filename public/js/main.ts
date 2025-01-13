@@ -3,6 +3,7 @@ const canvas = document.getElementById("canvas") as HTMLCanvasElement;
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+const con = new WebSocket("ws://localhost:3001/");
 const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 const playerSize = 80;
 // playerImage.src = "/game_assets/PNG/Hulls_Color_A/Hull_04.png";
