@@ -1,9 +1,10 @@
+import { con } from "./sockethandler";
+
 const canvas = document.getElementById("canvas") as HTMLCanvasElement;
 // setting canvas height and width in pixels
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-const con = new WebSocket("ws://localhost:3001/");
 const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 const playerSize = 80;
 // playerImage.src = "/game_assets/PNG/Hulls_Color_A/Hull_04.png";
@@ -88,13 +89,6 @@ const gameState: GameState = {
     //   hull: 3,
     // },
   ],
-};
-
-const tankConfig = {
-  tankHull: "/game_assets/PNG/Hulls_Color_A/Hull_04.png",
-  tankGun: "/game_assets/PNG/Weapon_Color_A_256X256/Gun_04.png",
-  tankTrack: "/game_assets/PNG/Tracks/Track_4_A.png",
-  tankTrack_2: "/game_assets/PNG/Tracks/Track_4_B.png",
 };
 
 const preloadPlayerImages = async (): Promise<void> => {
@@ -212,19 +206,30 @@ document.addEventListener("keydown", (event: KeyboardEvent): void => {
   const movementStep = 5;
 
   const player = gameState.players[0]; // Assuming we're moving the first player
-  player.moving = true;
   const map = gameState.map;
   switch (event.key) {
     case "w":
+      player.moving = true;
       map.y += movementStep;
+      //send tank location on map
+      con.send(
+        JSON.stringify({
+          x: 1,
+          y: 2,
+        })
+      );
+
       break;
     case "s":
+      player.moving = true;
       map.y -= movementStep;
       break;
     case "a":
+      player.moving = true;
       map.x += movementStep;
       break;
     case "d":
+      player.moving = true;
       map.x -= movementStep;
       break;
     case "e":
@@ -236,7 +241,7 @@ document.addEventListener("keydown", (event: KeyboardEvent): void => {
   }
 });
 
-document.addEventListener("keyup", (event: KeyboardEvent): void => {
+document.addEventListener("keyup", () => {
   const player = gameState.players[0]; // Assuming we're moving the first player
   player.moving = false;
 });

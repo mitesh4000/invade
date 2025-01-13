@@ -25,10 +25,38 @@ app.use(`${base_url}/greetings`, greetingsRouts);
 
 const wss = new WebSocketServer({ server });
 
+// const gameState: any = {
+//   players: [
+//     {
+//       playerId: 1,
+//       playerName: "player",
+//       tankHull: new Image(),
+//       tankGun: new Image(),
+//       tankTrack: new Image(),
+//       tankTrack_2: new Image(),
+//       x: canvas.width / 2,
+//       y: canvas.height / 2,
+//       angle: 0,
+//       color: "B",
+//       hull: 2,
+//       track: 2,
+//       moving: false,
+//     },
+//   ],
+// };
 wss.on("connection", function connection(ws) {
   ws.on("error", console.error);
+
   ws.on("message", function incoming(message, isBinary) {
-    console.log("received: %s", message, isBinary);
+    console.log(message);
+    try {
+      // Handle string or buffer message
+      const messageStr = message.toString();
+      const decodedMsg = JSON.parse(messageStr);
+      console.log("Decoded message:", decodedMsg);
+    } catch (error) {
+      console.error("Error parsing message:", error);
+    }
   });
   //log the client unique id
   console.log(`Client connected`);
