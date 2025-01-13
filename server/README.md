@@ -1,4 +1,5 @@
 ## Overview
+
 Welcome to the **invade**, an 2D online multiplayer battle arena where players command customizable tanks in strategic team-based combat. This README provides essential information to get started with playing, developing, or contributing to the game.
 
 ---
@@ -17,17 +18,20 @@ Welcome to the **invade**, an 2D online multiplayer battle arena where players c
 ## Gameplay
 
 ### Objective
+
 - Work with your team to destroy the enemy base while defending your own.
 - Capture strategic points to gain resources and buffs.
 - Eliminate opposing players to weaken their team.
 
 ### Controls
+
 - **W/A/S/D**: Move your tank.
 - **Mouse**: Aim and shoot.
 - **Abilities**: Activate with Q/E/R (customizable keybindings available).
 - **Special Action**: Use F for specific arena interactions (e.g., activating traps).
 
 ### Tank Classes
+
 - **Assault**: High damage output but lower defense.
 - **Defender**: Strong armor and crowd-control abilities.
 - **Scout**: Fast and agile, specializing in reconnaissance.
@@ -38,11 +42,13 @@ Welcome to the **invade**, an 2D online multiplayer battle arena where players c
 ## Installation
 
 ### For Players
+
 1. Download the game installer from [official website or platform link].
 2. Run the installer and follow on-screen instructions.
 3. Launch the game and create an account.
 
 ### For Developers
+
 1. Clone the repository:
    ```bash
    git clone [repository-link]
@@ -52,9 +58,18 @@ Welcome to the **invade**, an 2D online multiplayer battle arena where players c
    [dependency manager command, e.g., npm install or pip install -r requirements.txt]
    ```
 3. Run the development server:
+
    ```bash
    [command to start the server, e.g., npm start]
+
    ```
+
+4. Add the env variables
+   server :-
+   MONGODB_URI
+   PORT
+   client :-
+   VITE_BASE_API_URL
 
 ---
 
@@ -65,6 +80,7 @@ Welcome to the **invade**, an 2D online multiplayer battle arena where players c
 3. Submit a pull request for review.
 
 ### Guidelines
+
 - Follow the coding standards outlined in the [CONTRIBUTING.md] file.
 - Write unit tests for new features.
 - Ensure compatibility with all supported platforms.
@@ -72,6 +88,7 @@ Welcome to the **invade**, an 2D online multiplayer battle arena where players c
 ---
 
 ## Roadmap
+
 - **Beta Release**: [Insert Date]
 - **New Tanks and Abilities**: Quarterly updates.
 - **Esports Integration**: Tournaments and live events.
@@ -82,6 +99,7 @@ Welcome to the **invade**, an 2D online multiplayer battle arena where players c
 ## Community
 
 Join the discussion and stay updated:
+
 - **Discord**: [Invite Link]
 - **Reddit**: [Subreddit Link]
 - **Twitter**: [Handle]
@@ -90,14 +108,15 @@ Join the discussion and stay updated:
 ---
 
 ## Support
+
 If you encounter issues, contact our support team at [support email] or visit the [Help Center Link].
 
 ---
 
 ## License
+
 This project is licensed under the [LICENSE NAME] License - see the [LICENSE.md](LICENSE.md) file for details.
 
 ---
 
 Thank you for being part of the Tank MOBA Game community. Get ready for explosive battles and strategic tank warfare!
-

@@ -1,5 +1,4 @@
 import { con } from "./sockethandler";
-
 const canvas = document.getElementById("canvas") as HTMLCanvasElement;
 // setting canvas height and width in pixels
 canvas.width = window.innerWidth;
@@ -97,11 +96,23 @@ const preloadPlayerImages = async (): Promise<void> => {
     const tankHull = new Image();
     const tankTrack = new Image();
     const tankTrack_2 = new Image();
-    tankHull.src = `/game_assets/PNG/Hulls_Color_${player.color}/Hull_0${player.hull}.png`;
-    tankGun.src = `/game_assets/PNG/Weapon_Color_${player.color}_256X256/Gun_0${player.hull}.png`;
-    tankTrack.src = `/game_assets/PNG/Tracks/Track_${player.track}_A.png`;
-    tankTrack_2.src = `/game_assets/PNG/Tracks/Track_${player.track}_B.png`;
-    gameState.map.mapImage.src = "/game_assets/map.png";
+    tankHull.src = `${
+      import.meta.env.VITE_BASE_API_URL
+    }/game_assets/PNG/Hulls_Color_${player.color}/Hull_0${player.hull}.png`;
+    tankGun.src = `${
+      import.meta.env.VITE_BASE_API_URL
+    }/game_assets/PNG/Weapon_Color_${player.color}_256X256/Gun_0${
+      player.hull
+    }.png`;
+    tankTrack.src = `${
+      import.meta.env.VITE_BASE_API_URL
+    }/game_assets/PNG/Tracks/Track_${player.track}_A.png`;
+    tankTrack_2.src = `${
+      import.meta.env.VITE_BASE_API_URL
+    }/game_assets/PNG/Tracks/Track_${player.track}_B.png`;
+    gameState.map.mapImage.src = `${
+      import.meta.env.VITE_BASE_API_URL
+    }/game_assets/map.png`;
 
     return new Promise<void>((resolve, reject) => {
       const images = [tankHull, tankGun, tankTrack, tankTrack_2];
