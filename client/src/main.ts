@@ -1,4 +1,6 @@
+import playerAim from "./playerAim";
 import { con } from "./sockethandler";
+
 const canvas = document.getElementById("canvas") as HTMLCanvasElement;
 // setting canvas height and width in pixels
 canvas.width = window.innerWidth;
@@ -198,7 +200,13 @@ const drawPlayer = (player: Player): void => {
     ctx.save();
 
     ctx.translate(player.x + playerSize / 2, player.y + playerSize / 1.6);
-    ctx.rotate((player.angle * Math.PI) / 180);
+
+    const turetAngel = playerAim({
+      x: player.x + playerSize / 2,
+      y: player.y + playerSize / 1.6,
+    });
+    console.log(turetAngel);
+    ctx.rotate(turetAngel);
 
     ctx.drawImage(player.tankGun, -40, -40, playerSize, playerSize);
     ctx.translate(0, 0);
