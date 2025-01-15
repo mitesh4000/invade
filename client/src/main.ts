@@ -1,5 +1,6 @@
-import playerAim from "./playerAim";
+import { playerAim } from "./playerControll";
 import { con } from "./sockethandler";
+import { GameState, Player } from "./types/player";
 
 const canvas = document.getElementById("canvas") as HTMLCanvasElement;
 // setting canvas height and width in pixels
@@ -11,30 +12,6 @@ const playerSize = 80;
 // playerImage.src = "/game_assets/PNG/Hulls_Color_A/Hull_04.png";
 
 // Define types for Player and GameState
-interface Player {
-  playerId: number;
-  playerName: string;
-  tankHull: HTMLImageElement;
-  tankGun: HTMLImageElement;
-  tankTrack: HTMLImageElement;
-  tankTrack_2: HTMLImageElement;
-  x: number;
-  y: number;
-  angle: number;
-  color: string;
-  hull: number;
-  moving: boolean;
-  track: Number; // example ["A",2]
-}
-
-interface GameState {
-  map: {
-    mapImage: HTMLImageElement;
-    x: number;
-    y: number;
-  };
-  players: Player[];
-}
 
 // Initial game state
 const gameState: GameState = {
@@ -55,6 +32,7 @@ const gameState: GameState = {
       y: canvas.height / 2,
       angle: 0,
       color: "B",
+      direaction: 0,
       hull: 2,
       track: 2,
       moving: false,
@@ -157,63 +135,85 @@ const drawMap = (): void => {
 };
 
 const drawPlayer = (player: Player): void => {
-  if (player.tankHull && player.tankTrack) {
-    lastAnimationFrame += 1;
+  if (!player.tankHull || !player.tankTrack) {
+    console.error(`playerImage not found for player: ${player.playerName}`);
+    return;
+  }
 
-    if (lastAnimationFrame > frameInterval && player.moving) {
-      currentTrackImage = currentTrackImage === 0 ? 1 : 0;
-      lastAnimationFrame = 0;
-    }
-    if (currentTrackImage === 0) {
-      ctx.drawImage(
-        player.tankTrack,
-        player.x + playerSize / 5,
-        player.y,
-        playerSize / 4,
-        playerSize
-      );
-      ctx.drawImage(
-        player.tankTrack,
-        player.x + playerSize / 1.8,
-        player.y,
-        playerSize / 4,
-        playerSize
-      );
-    } else if (currentTrackImage === 1) {
-      ctx.drawImage(
-        player.tankTrack_2,
-        player.x + playerSize / 5,
-        player.y,
-        playerSize / 4,
-        playerSize
-      );
-      ctx.drawImage(
-        player.tankTrack_2,
-        player.x + playerSize / 1.8,
-        player.y,
-        playerSize / 4,
-        playerSize
-      );
-    }
+  ctx.save();
+  // Center translation for entire tank
+  ctx.translate(player.x + playerSize / 2, player.y + playerSize / 2);
 
-    ctx.drawImage(player.tankHull, player.x, player.y, playerSize, playerSize);
-    ctx.save();
+  // Rotate entire tank
+  ctx.rotate(player.direaction);
 
-    ctx.translate(player.x + playerSize / 2, player.y + playerSize / 1.6);
+  // Animate tracks
+  lastAnimationFrame += 1;
+  if (lastAnimationFrame > frameInterval && player.moving) {
+    currentTrackImage = currentTrackImage === 0 ? 1 : 0;
+    lastAnimationFrame = 0;
+  }
 
-    const turetAngel = playerAim({
+  // Draw tracks
+  const trackImage =
+    currentTrackImage === 0 ? player.tankTrack : player.tankTrack_2;
+  ctx.drawImage(
+    trackImage,
+    -playerSize / 2 + playerSize / 6.5,
+    -playerSize / 2,
+    playerSize / 4,
+    playerSize
+  );
+  ctx.drawImage(
+    trackImage,
+    -playerSize / 2 + playerSize / 1.8,
+    -playerSize / 2,
+    playerSize / 4,
+    playerSize
+  );
+
+  // Draw hull
+  ctx.drawImage(
+    player.tankHull,
+    -playerSize / 2,
+    -playerSize / 2,
+    playerSize,
+    playerSize
+  );
+
+  // Turret positioning and rotation
+  ctx.save();
+  ctx.translate(0, 0);
+
+  ctx.beginPath();
+  ctx.fillStyle = "red";
+  ctx.arc(0, 0, 5, 0, Math.PI * 2);
+  ctx.fill();
+
+  playerAim(
+    {
       x: player.x + playerSize / 2,
       y: player.y + playerSize / 1.6,
-    });
-    console.log(turetAngel);
-    ctx.rotate(turetAngel);
+    },
+    (turetAngle) => {
+      player.angle = turetAngle;
+    }
+  );
 
-    ctx.drawImage(player.tankGun, -40, -40, playerSize, playerSize);
-    ctx.translate(0, 0);
-    ctx.restore();
-  } else {
-    console.error(`playerImage not found for player: ${player.playerName}`);
-  }
+  // Rotate turret
+  ctx.rotate(player.angle + Math.PI / 2);
+
+  // Draw gun
+  ctx.drawImage(
+    player.tankGun,
+    -(playerSize / 2),
+    -(playerSize / 1.75),
+    playerSize,
+    playerSize
+  );
+
+  ctx.restore();
+  ctx.restore();
 };
 
 const drawAllThePlayers = (): void => {
@@ -252,10 +252,12 @@ document.addEventListener("keydown", (event: KeyboardEvent): void => {
       map.x -= movementStep;
       break;
     case "e":
-      player.angle += 5;
+      player.moving = true;
+      player.direaction += 0.01;
       break;
     case "q":
-      player.angle -= 5;
+      player.moving = true;
+      player.direaction -= 0.01;
       break;
   }
 });
