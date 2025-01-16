@@ -1,19 +1,13 @@
-import { playerAim } from "./playerControll";
-import { con } from "./sockethandler";
+import { movePlayer, playerAim } from "./playerControll";
 import { GameState, Player } from "./types/player";
 
 const canvas = document.getElementById("canvas") as HTMLCanvasElement;
-// setting canvas height and width in pixels
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 const playerSize = 80;
 // playerImage.src = "/game_assets/PNG/Hulls_Color_A/Hull_04.png";
-
-// Define types for Player and GameState
-
-// Initial game state
 const gameState: GameState = {
   map: {
     mapImage: new Image(),
@@ -32,43 +26,19 @@ const gameState: GameState = {
       y: canvas.height / 2,
       angle: 0,
       color: "B",
-      direaction: 0,
+      direaction: Math.PI / 4,
+      tankCenterOfRotation: { x: 0, y: 0 },
+      turetCenterOfRotation: { x: 0, y: 0 },
+      velocity: 5,
       hull: 2,
       track: 2,
       moving: false,
+      pressedKeys: [],
     },
-    // {
-    //   playerId: 2,
-    //   playerName: "player2",
-    //   playerImage: new Image(),
-    //   x: 200,
-    //   y: 20,
-    //   angle: 45,
-    //   color: "B",
-    //   hull: 4,
-    // },
-    // {
-    //   playerId: 3,
-    //   playerName: "player3",
-    //   playerImage: new Image(),
-    //   x: 300,
-    //   y: 20,
-    //   angle: 45,
-    //   color: "C",
-    //   hull: 1,
-    // },
-    // {
-    //   playerId: 4,
-    //   playerName: "player4",
-    //   playerImage: new Image(),
-    //   x: 400,
-    //   y: 20,
-    //   angle: 45,
-    //   color: "D",
-    //   hull: 3,
-    // },
   ],
 };
+
+movePlayer(gameState);
 
 const preloadPlayerImages = async (): Promise<void> => {
   const promises = gameState.players.map((player) => {
@@ -119,9 +89,9 @@ const preloadPlayerImages = async (): Promise<void> => {
   });
 
   try {
-    await Promise.all(promises); // Wait until all images are loaded
+    await Promise.all(promises);
     console.log("All player images preloaded");
-    gameLoop(); // Start the game loop after images are preloaded
+    gameLoop();
   } catch (error) {
     console.error("Failed to preload images", error);
   }
@@ -136,25 +106,22 @@ const drawMap = (): void => {
 
 const drawPlayer = (player: Player): void => {
   if (!player.tankHull || !player.tankTrack) {
+    alert("playerImage not found for player: " + player.playerName);
     console.error(`playerImage not found for player: ${player.playerName}`);
     return;
   }
 
   ctx.save();
-  // Center translation for entire tank
   ctx.translate(player.x + playerSize / 2, player.y + playerSize / 2);
 
-  // Rotate entire tank
   ctx.rotate(player.direaction);
 
-  // Animate tracks
   lastAnimationFrame += 1;
   if (lastAnimationFrame > frameInterval && player.moving) {
     currentTrackImage = currentTrackImage === 0 ? 1 : 0;
     lastAnimationFrame = 0;
   }
 
-  // Draw tracks
   const trackImage =
     currentTrackImage === 0 ? player.tankTrack : player.tankTrack_2;
   ctx.drawImage(
@@ -172,7 +139,6 @@ const drawPlayer = (player: Player): void => {
     playerSize
   );
 
-  // Draw hull
   ctx.drawImage(
     player.tankHull,
     -playerSize / 2,
@@ -180,15 +146,6 @@ const drawPlayer = (player: Player): void => {
     playerSize,
     playerSize
   );
-
-  // Turret positioning and rotation
-  ctx.save();
-  ctx.translate(0, 0);
-
-  ctx.beginPath();
-  ctx.fillStyle = "red";
-  ctx.arc(0, 0, 5, 0, Math.PI * 2);
-  ctx.fill();
 
   playerAim(
     {
@@ -200,10 +157,8 @@ const drawPlayer = (player: Player): void => {
     }
   );
 
-  // Rotate turret
   ctx.rotate(player.angle + Math.PI / 2);
 
-  // Draw gun
   ctx.drawImage(
     player.tankGun,
     -(playerSize / 2),
@@ -212,55 +167,13 @@ const drawPlayer = (player: Player): void => {
     playerSize
   );
 
-  ctx.restore();
+  // ctx.restore();
   ctx.restore();
 };
 
 const drawAllThePlayers = (): void => {
   gameState.players.forEach(drawPlayer);
 };
-
-// create illusion of player movement by moving the background with wasd controls
-document.addEventListener("keydown", (event: KeyboardEvent): void => {
-  const movementStep = 5;
-
-  const player = gameState.players[0]; // Assuming we're moving the first player
-  const map = gameState.map;
-  switch (event.key) {
-    case "w":
-      player.moving = true;
-      map.y += movementStep;
-      //send tank location on map
-      con.send(
-        JSON.stringify({
-          x: 1,
-          y: 2,
-        })
-      );
-
-      break;
-    case "s":
-      player.moving = true;
-      map.y -= movementStep;
-      break;
-    case "a":
-      player.moving = true;
-      map.x += movementStep;
-      break;
-    case "d":
-      player.moving = true;
-      map.x -= movementStep;
-      break;
-    case "e":
-      player.moving = true;
-      player.direaction += 0.01;
-      break;
-    case "q":
-      player.moving = true;
-      player.direaction -= 0.01;
-      break;
-  }
-});
 
 document.addEventListener("keyup", () => {
   const player = gameState.players[0]; // Assuming we're moving the first player
