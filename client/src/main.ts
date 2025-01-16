@@ -6,7 +6,7 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
-const playerSize = 80;
+const playerSize = 64;
 // playerImage.src = "/game_assets/PNG/Hulls_Color_A/Hull_04.png";
 const gameState: GameState = {
   map: {
@@ -26,7 +26,7 @@ const gameState: GameState = {
       y: canvas.height / 2,
       angle: 0,
       color: "B",
-      direaction: Math.PI / 4,
+      direaction: 0,
       tankCenterOfRotation: { x: 0, y: 0 },
       turetCenterOfRotation: { x: 0, y: 0 },
       velocity: 5,
@@ -101,7 +101,13 @@ const frameInterval = 2;
 let currentTrackImage = 1;
 
 const drawMap = (): void => {
-  ctx.drawImage(gameState.map.mapImage, gameState.map.x, gameState.map.y);
+  ctx.drawImage(
+    gameState.map.mapImage,
+    gameState.map.x,
+    gameState.map.y,
+    gameState.map.mapImage.width / 2,
+    gameState.map.mapImage.height / 2
+  );
 };
 
 const drawPlayer = (player: Player): void => {
@@ -138,6 +144,11 @@ const drawPlayer = (player: Player): void => {
     playerSize / 4,
     playerSize
   );
+
+  ctx.beginPath();
+  ctx.moveTo(0, 0); // Starting point
+  ctx.lineTo(500, 0); // Ending point with same Y coordinate
+  ctx.stroke(); // Actually draw the line
 
   ctx.drawImage(
     player.tankHull,
