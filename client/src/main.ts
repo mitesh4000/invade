@@ -14,6 +14,7 @@ const gameState: GameState = {
     x: 0,
     y: 0,
   },
+  viewPort: { x: 0, y: 0 },
   players: [
     {
       playerId: 1,
@@ -64,6 +65,9 @@ const preloadPlayerImages = async (): Promise<void> => {
       import.meta.env.VITE_BASE_API_URL
     }/game_assets/map.png`;
 
+    let maptile = `${
+      import.meta.env.VITE_BASE_API_URL
+    }/game_assets/PNG/server/public/game_assets/invade tiles.png`;
     return new Promise<void>((resolve, reject) => {
       const images = [tankHull, tankGun, tankTrack, tankTrack_2];
       images.forEach((image) => image.decode());
@@ -103,11 +107,12 @@ let currentTrackImage = 1;
 const drawMap = (): void => {
   ctx.drawImage(
     gameState.map.mapImage,
-    gameState.map.x,
-    gameState.map.y,
+    gameState.viewPort.x,
+    gameState.viewPort.y,
     gameState.map.mapImage.width / 2,
     gameState.map.mapImage.height / 2
   );
+  console.log(gameState.viewPort);
 };
 
 const drawPlayer = (player: Player): void => {

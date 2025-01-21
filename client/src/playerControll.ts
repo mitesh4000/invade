@@ -38,14 +38,16 @@ function movePlayer(gameState: GameState): void {
   function move() {
     if (pressedKeys.includes("w")) {
       player.moving = true;
-      map.x -= Math.sin(player.direaction) * player.velocity;
-      map.y -= Math.cos(player.direaction) * player.velocity;
-      console.log("map axis ", map.x, map.y);
+      // Forward movement calculation
+      player.x += Math.cos(player.direaction) * player.velocity;
+      player.y += Math.sin(player.direaction) * player.velocity;
+      console.log("Player position", player.x, player.y);
     }
     if (pressedKeys.includes("s")) {
       player.moving = true;
-      map.x += Math.cos(player.direaction) * player.velocity;
-      map.y += Math.sin(player.direaction) * player.velocity;
+      // Backward movement calculation
+      player.x -= Math.cos(player.direaction) * player.velocity;
+      player.y -= Math.sin(player.direaction) * player.velocity;
     }
     if (pressedKeys.includes("d")) {
       player.moving = true;

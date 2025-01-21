@@ -26,4 +26,5 @@ export interface GameState {
     y: number;
   };
   players: Player[];
+  viewPort: { x: number; y: number };
 }
