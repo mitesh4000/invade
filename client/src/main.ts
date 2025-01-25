@@ -37,6 +37,7 @@ const gameState: GameState = {
       pressedKeys: [],
     },
   ],
+  tileAtlas: new Image(),
 };
 
 movePlayer(gameState);
@@ -65,9 +66,9 @@ const preloadPlayerImages = async (): Promise<void> => {
       import.meta.env.VITE_BASE_API_URL
     }/game_assets/map.png`;
 
-    let maptile = `${
+    gameState.tileAtlas.src = `${
       import.meta.env.VITE_BASE_API_URL
-    }/game_assets/PNG/server/public/game_assets/invade tiles.png`;
+    }/game_assets/tiles_atlas.png`;
     return new Promise<void>((resolve, reject) => {
       const images = [tankHull, tankGun, tankTrack, tankTrack_2];
       images.forEach((image) => image.decode());
@@ -106,7 +107,7 @@ let currentTrackImage = 1;
 
 const drawMap = (): void => {
   ctx.drawImage(
-    gameState.map.mapImage,
+    gameState.tileAtlas,
     gameState.viewPort.x,
     gameState.viewPort.y,
     gameState.map.mapImage.width / 2,

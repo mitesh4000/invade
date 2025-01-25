@@ -27,4 +27,5 @@ export interface GameState {
   };
   players: Player[];
   viewPort: { x: number; y: number };
+  tileAtlas: HTMLImageElement;
 }
